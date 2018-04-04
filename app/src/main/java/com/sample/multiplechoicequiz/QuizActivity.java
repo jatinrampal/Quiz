@@ -28,6 +28,7 @@ public class QuizActivity extends AppCompatActivity {
     private int mQuestionNumber = 0; // current question number
     private int counter = 0;
     private int mHighScore=0;
+    DataBaseHelper db;
 
     SharedPreferences myPrefs;
 
@@ -36,7 +37,7 @@ public class QuizActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         myPrefs = getPreferences(MODE_PRIVATE);
-
+        db = new DataBaseHelper(getApplicationContext());
         // setup screen for the first question with four alternative to answer
         mScoreView = (TextView)findViewById(R.id.score);
         mQuestionView = (TextView)findViewById(R.id.question);
@@ -44,11 +45,19 @@ public class QuizActivity extends AppCompatActivity {
         mButtonChoice2 = (Button)findViewById(R.id.choice2);
         mButtonChoice3 = (Button)findViewById(R.id.choice3);
         mButtonChoice4 = (Button)findViewById(R.id.choice4);
-        updateQuestion();
+        //updateQuestion();
         // show current total score for the user
 
+        db.addQuestion(1, "1. When did Google acquired Android?");
+        db.addQuestion(2, "2. What is the name of build toolkit for Android Studio?");
+        db.addQuestion(3, "3. What widget can replace any use of radio buttons?");
+        db.addQuestion(4, "4. What is the most recent Android OS ?");
+        db.addQuestion(5, "5. Which was the first commercially available phone running Android?");
+        db.addQuestion(6, "6. Which one of the among would be the next version of Android?");
+
         readPreferences();
-        updateScore(mScore);
+        updateQuestion();
+
     }
 
     private void updateQuestion(){
@@ -69,6 +78,7 @@ public class QuizActivity extends AppCompatActivity {
             Toast.makeText(QuizActivity.this, "It was the last question!", Toast.LENGTH_SHORT).show();
             */
 
+        /*
         InputStream inputQuestions = getResources().openRawResource(R.raw.questions);
         Scanner scanQuestions = new Scanner(inputQuestions);
 
@@ -80,9 +90,11 @@ public class QuizActivity extends AppCompatActivity {
             i++;
         }
         if(mQuestionNumber<arrayQues.length)
-            mQuestionView.setText(arrayQues[mQuestionNumber]);
+            mQuestionView.setText(arrayQues[mQuestionNumber]); */
 
+        mQuestionView.setText(db.updateQuestion(mQuestionNumber+1));
 
+        /*
         InputStream inputOptions = getResources().openRawResource(R.raw.options);
         Scanner scanOptions = new Scanner(inputOptions);
 
@@ -99,21 +111,30 @@ public class QuizActivity extends AppCompatActivity {
             }
             q++;
         }
+
+
+
+
         mButtonChoice1.setText(arrayOptions[mQuestionNumber][0]);
         mButtonChoice2.setText(arrayOptions[mQuestionNumber][1]);
         mButtonChoice3.setText(arrayOptions[mQuestionNumber][2]);
         mButtonChoice4.setText(arrayOptions[mQuestionNumber][3]);
         mQuestionNumber++;
+        */
 
+
+        mQuestionNumber++;
     }
 
     // show current total score for the user
     private void updateScore(int point) {
-        if(mScore>mQuestionLibrary.getLength())
+        if(mScore>db.totalQuestions())
             Toast.makeText(QuizActivity.this, "Invalid!", Toast.LENGTH_SHORT).show();
         else
-            mScoreView.setText("" + mScore+"/"+mQuestionLibrary.getLength() + "\n" + "" + mHighScore+"/"+mQuestionLibrary.getLength() );
+            mScoreView.setText("" + mScore+"/"+db.totalQuestions() + "\n" + "" + mHighScore+"/"+db.totalQuestions() );
     }
+
+
 
     public void onClick(View view) {
 
