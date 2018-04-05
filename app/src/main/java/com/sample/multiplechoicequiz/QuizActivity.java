@@ -55,8 +55,46 @@ public class QuizActivity extends AppCompatActivity {
         db.addQuestion(5, "5. Which was the first commercially available phone running Android?");
         db.addQuestion(6, "6. Which one of the among would be the next version of Android?");
 
+        db.addOption(1,"2003",1);
+        db.addOption(2,"2004",1);
+        db.addOption(3,"2005",1);
+        db.addOption(4,"2006",1);
+
+        db.addOption(1,"JVM",2);
+        db.addOption(2,"Gradle",2);
+        db.addOption(3,"Dalvik",2);
+        db.addOption(4,"HAXM",2);
+
+        db.addOption(1,"Toggle",3);
+        db.addOption(2,"Spinner",3);
+        db.addOption(3,"Switch",3);
+        db.addOption(4,"CheckBox",3);
+
+        db.addOption(1,"Oreo",4);
+        db.addOption(2,"Nougat",4);
+        db.addOption(3,"Marshmallow",4);
+        db.addOption(4,"Octopus",4);
+
+        db.addOption(1,"Galaxy",5);
+        db.addOption(2,"Nexus",5);
+        db.addOption(3,"Dream",5);
+        db.addOption(4,"LG",5);
+
+        db.addOption(1,"Pineapple",6);
+        db.addOption(2,"Popcorn",6);
+        db.addOption(3,"P",6);
+        db.addOption(4,"Plus",6);
+
+        db.addAnswer(1, "2005");
+        db.addAnswer(2, "Gradle");
+        db.addAnswer(3, "Spinner");
+        db.addAnswer(4, "Oreo");
+        db.addAnswer(5, "Dream");
+        db.addAnswer(6, "P");
+
         readPreferences();
         updateQuestion();
+        updateScore(mScore);
 
     }
 
@@ -92,8 +130,6 @@ public class QuizActivity extends AppCompatActivity {
         if(mQuestionNumber<arrayQues.length)
             mQuestionView.setText(arrayQues[mQuestionNumber]); */
 
-        mQuestionView.setText(db.updateQuestion(mQuestionNumber+1));
-
         /*
         InputStream inputOptions = getResources().openRawResource(R.raw.options);
         Scanner scanOptions = new Scanner(inputOptions);
@@ -122,6 +158,24 @@ public class QuizActivity extends AppCompatActivity {
         mQuestionNumber++;
         */
 
+        if(mQuestionNumber<db.totalQuestions())
+        {
+            mQuestionView.setText(db.updateQuestion(mQuestionNumber+1));
+            mButtonChoice1.setText(db.updateOptions(mQuestionNumber+1,1));
+            mButtonChoice2.setText(db.updateOptions(mQuestionNumber+1,2));
+            mButtonChoice3.setText(db.updateOptions(mQuestionNumber+1,3));
+            mButtonChoice4.setText(db.updateOptions(mQuestionNumber+1,4));
+        }
+
+        else
+        {
+            Toast.makeText(QuizActivity.this, "It was the last question!", Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
+
 
         mQuestionNumber++;
     }
@@ -143,6 +197,7 @@ public class QuizActivity extends AppCompatActivity {
         Button answer = (Button) view;
         // if the answer is correct, increase the score
 
+        /*
         String[] arrayAnswers = new String[100];
         int i=0;
 
@@ -154,18 +209,20 @@ public class QuizActivity extends AppCompatActivity {
             arrayAnswers[i] = scanAnswers.nextLine();
             i++;
         }
+        */
 
-        for(String n : arrayAnswers) {
-            if (answer.getText().equals(n)) {
+
+
+            if (answer.getText().equals(db.checkAnswer(mQuestionNumber))) {
                 mScore = mScore + 1;
                 Toast.makeText(QuizActivity.this, "Correct!", Toast.LENGTH_SHORT).show();
-                break;
-            } else {
+            }
+            else {
                 Toast.makeText(QuizActivity.this, "Wrong!", Toast.LENGTH_SHORT).show();
 
             }
-        }
-        counter++;
+
+
 
         if(mScore>mHighScore)
             mHighScore=mScore;
@@ -174,11 +231,12 @@ public class QuizActivity extends AppCompatActivity {
         editor.commit();
 
         // once user answer the question, we move on to the next one
-        if(counter<=mQuestionLibrary.getLength())
+        if(counter<=db.totalQuestions())
         {
             updateQuestion();
             updateScore(mScore);
         }
+        counter++;
 
     }
 

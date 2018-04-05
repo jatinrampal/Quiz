@@ -18,6 +18,8 @@ import android.util.Log;
 public class DataBaseHelper extends SQLiteOpenHelper {
 
     private String question;
+    private String option;
+    private String answer;
     private int totalQuestions;
 
     // Database Name
@@ -47,7 +49,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // Option Table Create Query in this string
     private static final String CREATE_TABLE_OPTIONS = "CREATE TABLE "
             + TABLE_OPTIONS + "(" + OID
-            + " INTEGER PRIMARY KEY ," + OPTION + " TEXT, "
+            + " INTEGER  ," + OPTION + " TEXT, "
             + QID + " INTEGER );";
 
     //TABLE-3 ANSWERS
@@ -99,12 +101,38 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         // insert row in client table
 
         long insert = db.insert(TABLE_QUESTIONS, null, values);
+    }
 
+    public void addOption(int id, String option, int qid) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Creating content values
+        ContentValues values = new ContentValues();
+        values.put(OID, id);
+        values.put(OPTION, option);
+        values.put(QID, qid);
+
+        // insert row in client table
+
+        long insert = db.insert(TABLE_OPTIONS, null, values);
+    }
+
+    public void addAnswer(int id, String answer) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // Creating content values
+        ContentValues values = new ContentValues();
+        values.put(QID, id);
+        values.put(ANSWER, answer);
+
+        // insert row in client table
+
+        long insert = db.insert(TABLE_ANSWERS, null, values);
     }
 
     public int totalQuestions() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT  * " + TABLE_QUESTIONS ;
+        String selectQuery = "SELECT  * FROM " + TABLE_QUESTIONS ;
         Cursor c = db.rawQuery(selectQuery, null);
 
         totalQuestions = c.getCount();
@@ -135,9 +163,8 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public String updateOptions(int qid, int oid) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        // SELECT * FROM client WHERE id = ?;
-        String selectQuery = "SELECT  * FROM " + TABLE_QUESTIONS + " WHERE "
-                + QID + " = " + qid;
+        String selectQuery = "SELECT  * FROM " + TABLE_OPTIONS + " WHERE "
+                + OID + " = " + oid + " AND " + QID + " = " + qid;
         Log.d(TAG, selectQuery);
 
         Cursor c = db.rawQuery(selectQuery, null);
@@ -145,10 +172,30 @@ public class DataBaseHelper extends SQLiteOpenHelper {
         if (c != null)
             c.moveToFirst();
 
-        question = c.getString(c.getColumnIndex(QUESTION));
+        option = c.getString(c.getColumnIndex(OPTION));
 
-        return question;
+        return option;
     }
+
+    public String checkAnswer(int qid) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // SELECT * FROM client WHERE id = ?;
+        String selectQuery = "SELECT  * FROM " + TABLE_ANSWERS + " WHERE "
+                + QID + " = " + qid ;
+        Log.d(TAG, selectQuery);
+
+        Cursor c = db.rawQuery(selectQuery, null);
+
+        if (c != null)
+            c.moveToFirst();
+
+        answer = c.getString(c.getColumnIndex(ANSWER));
+
+        return answer;
+    }
+
+
 
 
 
