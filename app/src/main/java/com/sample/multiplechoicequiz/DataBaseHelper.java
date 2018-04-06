@@ -191,7 +191,6 @@ public class DataBaseHelper extends SQLiteOpenHelper {
             c.moveToFirst();
 
         answer = c.getString(c.getColumnIndex(ANSWER));
-
         return answer;
     }
 
@@ -209,7 +208,7 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     public List<Client> getAllClientsList() {
         List<Client> clientArrayList = new ArrayList<Client>();
 
-        String selectQuery = "SELECT  * FROM " + TABLE_CLIENT;
+        String selectQuery = "SELECT  * FROM " + TABLE;
         Log.d(TAG, selectQuery);
 
         SQLiteDatabase db = this.getReadableDatabase();
